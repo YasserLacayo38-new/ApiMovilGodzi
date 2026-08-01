@@ -1,0 +1,25 @@
+@ApiMovilGodzi_HostAddress = http://localhost:5049
+
+POST {{ApiMovilGodzi_HostAddress}}/operations/listaprecio
+Accept: application/json
+
+###
+
+POST {{ApiMovilGodzi_HostAddress}}/operations/clientes
+Content-Type: application/json
+
+{
+  "ip": "192.168.1.1"
+}
+
+###
+
+POST {{ApiMovilGodzi_HostAddress}}/operations/vendedores
+Accept: application/json
+
+###
+
+POST {{ApiMovilGodzi_HostAddress}}/operations/modelos
+Accept: application/json
+
+###
