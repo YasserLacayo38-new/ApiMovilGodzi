@@ -34,10 +34,13 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<ListaPrecioRepository>()
     .AddScoped<ModeloRepository>()
     .AddScoped<VendedorRepository>()
+    .AddScoped<RemisionRepository>()
+    .AddScoped<VendedoresIPRepository>()
     .AddScoped<OperationUseCase>()
     .AddScoped<ListaPrecioUseCase>()
     .AddScoped<ModeloUseCase>()
-    .AddScoped<VendedorUseCase>();
+    .AddScoped<VendedorUseCase>()
+    .AddScoped<RemisionUseCase>();
 
 var app = builder.Build();
 
@@ -69,13 +72,44 @@ operationApi.MapPost("/remisiones", async ([FromBody] RemisionRequest request, O
     var result = await useCase.SyncRemisionesAsync(request.FechaRemision, request.Ip);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
+
+var listaprecioApi = app.MapGroup("/listaprecio");
+listaprecioApi.MapGet("/", async (ListaPrecioUseCase useCase) =>
+{
+    var result = await useCase.GetAllListaPrecioAsync();
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
+var modelosApi = app.MapGroup("/modelos");
+modelosApi.MapGet("/", async (ModeloUseCase useCase) =>
+{
+    var result = await useCase.GetAllModeloAsync();
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
+var remisionesApi = app.MapGroup("/remisiones");
+remisionesApi.MapGet("/", async (RemisionUseCase useCase) =>
+{
+    var result = await useCase.GetAllRemisionAsync();
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+remisionesApi.MapGet("/byvendedor", async ([FromQuery] DateTime fechaRemision, [FromQuery] string ip, RemisionUseCase useCase) =>
+{
+    var result = await useCase.GetAllRemisionByFechaAndIpAsync(fechaRemision, ip);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
 app.Run();
 
 public record ClientesRequest(string Ip);
-public record RemisionRequest(DateTime FechaRemision, string Ip)
+public record RemisionRequest(DateTime FechaRemision, string Ip);
 
 [JsonSerializable(typeof(ClientesRequest))]
 [JsonSerializable(typeof(Result<ResultProcedure>))]
+[JsonSerializable(typeof(RemisionRequest))]
+[JsonSerializable(typeof(Result<IEnumerable<ListaPrecio>>))]
+[JsonSerializable(typeof(Result<IEnumerable<Modelo>>))]
+[JsonSerializable(typeof(Result<IEnumerable<Remision>>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
     

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ApiMovilGodzi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0409ad44080ab4ab31537ca3bb54423072e839f")]
 [assembly: System.Reflection.AssemblyProductAttribute("ApiMovilGodzi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ApiMovilGodzi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

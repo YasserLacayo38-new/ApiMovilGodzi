@@ -68,4 +68,4 @@ C:\Users\yasse\source\repos\ApiMovilGodzi\ApiMovilGodzi\bin\Debug\net8.0\runtime
 C:\Users\yasse\source\repos\ApiMovilGodzi\ApiMovilGodzi\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\yasse\source\repos\ApiMovilGodzi\ApiMovilGodzi\obj\Debug\net8.0\ApiMovilGodzi.csproj.AssemblyReference.cache
 C:\Users\yasse\source\repos\ApiMovilGodzi\ApiMovilGodzi\obj\Debug\net8.0\ApiMovil.E6185DDB.Up2Date
-C:\Users\yasse\source\repos\ApiMovilGodzi\ApiMovilGodzi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\yasse\source\repos\ApiMovilGodzi\ApiMovilGodzi\obj\Debug\net8.0\ApiMovilGodzi.sourcelink.json
