@@ -1,4 +1,4 @@
-@ApiMovilGodzi_HostAddress = http://localhost:5049
+@ApiMovilGodzi_HostAddress = http://192.168.0.3:5049
 
 POST {{ApiMovilGodzi_HostAddress}}/operations/listaprecio
 Accept: application/json
@@ -20,6 +20,41 @@ Accept: application/json
 ###
 
 POST {{ApiMovilGodzi_HostAddress}}/operations/modelos
+Accept: application/json
+
+###
+
+POST {{ApiMovilGodzi_HostAddress}}/operations/remisiones
+Content-Type: application/json
+
+{
+  "fechaRemision": "2026-07-23",
+  "ip": "192.168.1.1"
+}
+
+###
+
+GET {{ApiMovilGodzi_HostAddress}}/listaprecio
+Accept: application/json
+
+###
+
+GET {{ApiMovilGodzi_HostAddress}}/modelos
+Accept: application/json
+
+###
+
+GET {{ApiMovilGodzi_HostAddress}}/modelos/byvendedor?fechaRemision=2026-07-23&ip=192.168.1.1
+Accept: application/json
+
+###
+
+GET {{ApiMovilGodzi_HostAddress}}/remisiones
+Accept: application/json
+
+###
+
+GET {{ApiMovilGodzi_HostAddress}}/remisiones/byvendedor?fechaRemision=2026-07-23&ip=192.168.1.1
 Accept: application/json
 
 ###

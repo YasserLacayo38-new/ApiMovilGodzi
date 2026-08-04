@@ -86,6 +86,11 @@ modelosApi.MapGet("/", async (ModeloUseCase useCase) =>
     var result = await useCase.GetAllModeloAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
+modelosApi.MapGet("/byvendedor", async ([FromQuery] DateTime fechaRemision, [FromQuery] string ip, ModeloUseCase useCase) =>
+{
+    var result = await useCase.GetModelosByIpAndFechaRemisionAsync(ip, fechaRemision);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
 
 var remisionesApi = app.MapGroup("/remisiones");
 remisionesApi.MapGet("/", async (RemisionUseCase useCase) =>

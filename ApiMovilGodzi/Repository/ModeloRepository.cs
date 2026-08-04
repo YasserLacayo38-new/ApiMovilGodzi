@@ -18,4 +18,20 @@ public class ModeloRepository
         using var connection = new SqlConnection(_connectionString.Connection);
         return await connection.QueryAsync<Modelo>("SELECT * FROM Modelo");
     }
+
+    public async Task<IEnumerable<Modelo>> GetModelosByVendedorFechaRemision(
+        string codigoVendedor, DateTime fechaRemision)
+    {
+        const string sql = @"
+            SELECT DISTINCT m.codigoModelo, m.codigo_vta AS CodigoVta, m.descripcion, m.precioVenta
+            FROM Modelo m
+            INNER JOIN RemisionDetalle rd ON m.codigoModelo = rd.codigoModelo
+            INNER JOIN Remision r ON r.numcom = rd.numcom
+            WHERE r.codigoVendedor = @CodigoVendedor
+              AND CAST(r.fechaRemision AS DATE) = CAST(@FechaRemision AS DATE)";
+
+        using var connection = new SqlConnection(_connectionString.Connection);
+        return await connection.QueryAsync<Modelo>(sql,
+            new { CodigoVendedor = codigoVendedor, FechaRemision = fechaRemision });
+    }
 }
