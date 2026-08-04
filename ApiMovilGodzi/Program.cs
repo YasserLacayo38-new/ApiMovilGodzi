@@ -36,11 +36,13 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<VendedorRepository>()
     .AddScoped<RemisionRepository>()
     .AddScoped<VendedoresIPRepository>()
+    .AddScoped<ClienteRepository>()
     .AddScoped<OperationUseCase>()
     .AddScoped<ListaPrecioUseCase>()
     .AddScoped<ModeloUseCase>()
     .AddScoped<VendedorUseCase>()
-    .AddScoped<RemisionUseCase>();
+    .AddScoped<RemisionUseCase>()
+    .AddScoped<ClienteUseCase>();
 
 var app = builder.Build();
 
@@ -104,6 +106,18 @@ remisionesApi.MapGet("/byvendedor", async ([FromQuery] DateTime fechaRemision, [
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
+var clientesApi = app.MapGroup("/clientes");
+clientesApi.MapGet("/", async (ClienteUseCase useCase) =>
+{
+    var result = await useCase.GetAllClienteAsync();
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+clientesApi.MapGet("/byip", async ([FromQuery] string ip, ClienteUseCase useCase) =>
+{
+    var result = await useCase.GetClientesByIpAsync(ip);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
 app.Run();
 
 public record ClientesRequest(string Ip);
@@ -115,6 +129,7 @@ public record RemisionRequest(DateTime FechaRemision, string Ip);
 [JsonSerializable(typeof(Result<IEnumerable<ListaPrecio>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Modelo>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Remision>>))]
+[JsonSerializable(typeof(Result<IEnumerable<Cliente>>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
     
