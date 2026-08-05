@@ -58,3 +58,8 @@ GET {{ApiMovilGodzi_HostAddress}}/remisiones/byvendedor?fechaRemision=2026-07-23
 Accept: application/json
 
 ###
+
+GET {{ApiMovilGodzi_HostAddress}}/vendedores/byip?ip=192.168.1.1
+Accept: application/json
+
+###

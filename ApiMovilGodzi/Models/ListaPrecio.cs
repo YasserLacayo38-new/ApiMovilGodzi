@@ -4,4 +4,6 @@ public class ListaPrecio
 {
     public string CodigoListaPrecio { get; set; } = null!;
     public string Descripcion { get; set; } = null!;
+    public decimal Porcentaje { get; set; }
+    public bool PrecioBase { get; set; }
 }

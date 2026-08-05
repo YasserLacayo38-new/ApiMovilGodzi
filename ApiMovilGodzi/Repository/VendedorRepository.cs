@@ -18,4 +18,12 @@ public class VendedorRepository
         using var connection = new SqlConnection(_connectionString.Connection);
         return await connection.QueryAsync<Vendedor>("SELECT * FROM Vendedor");
     }
+
+    public async Task<Vendedor?> GetByIdAsync(string codigoVendedor)
+    {
+        using var connection = new SqlConnection(_connectionString.Connection);
+        return await connection.QueryFirstOrDefaultAsync<Vendedor>(
+            "SELECT * FROM Vendedor WHERE codigoVendedor = @CodigoVendedor",
+            new { CodigoVendedor = codigoVendedor });
+    }
 }

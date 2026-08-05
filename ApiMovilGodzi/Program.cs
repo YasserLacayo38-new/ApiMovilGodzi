@@ -112,11 +112,20 @@ clientesApi.MapGet("/", async (ClienteUseCase useCase) =>
     var result = await useCase.GetAllClienteAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
+
 clientesApi.MapGet("/byip", async ([FromQuery] string ip, ClienteUseCase useCase) =>
 {
     var result = await useCase.GetClientesByIpAsync(ip);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
+
+var vendedoresApi = app.MapGroup("/vendedores");
+vendedoresApi.MapGet("/byip", async ([FromQuery] string ip, VendedorUseCase useCase) =>
+{
+    var result = await useCase.GetVendedorByIpAsync(ip);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
 
 app.Run();
 
@@ -130,6 +139,7 @@ public record RemisionRequest(DateTime FechaRemision, string Ip);
 [JsonSerializable(typeof(Result<IEnumerable<Modelo>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Remision>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Cliente>>))]
+[JsonSerializable(typeof(Result<Vendedor>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
     
