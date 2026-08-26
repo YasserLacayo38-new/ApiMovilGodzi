@@ -37,12 +37,16 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<RemisionRepository>()
     .AddScoped<VendedoresIPRepository>()
     .AddScoped<ClienteRepository>()
+    .AddScoped<VendedoresNumProformaRepository>()
     .AddScoped<OperationUseCase>()
     .AddScoped<ListaPrecioUseCase>()
     .AddScoped<ModeloUseCase>()
     .AddScoped<VendedorUseCase>()
     .AddScoped<RemisionUseCase>()
-    .AddScoped<ClienteUseCase>();
+    .AddScoped<ClienteUseCase>()
+    .AddScoped<VendedoresNumProformaUseCase>();
+
+//builder.WebHost.UseKestrelHttpsConfiguration();
 
 var app = builder.Build();
 
@@ -126,6 +130,18 @@ vendedoresApi.MapGet("/byip", async ([FromQuery] string ip, VendedorUseCase useC
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
+var numProformasApi = app.MapGroup("/numproformas");
+numProformasApi.MapGet("/", async (VendedoresNumProformaUseCase useCase) =>
+{
+    var result = await useCase.GetAllNumProformasAsync();
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+numProformasApi.MapGet("/byip", async ([FromQuery] string ip, VendedoresNumProformaUseCase useCase) =>
+{
+    var result = await useCase.GetNumProformasByIpAsync(ip);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
 
 app.Run();
 
@@ -140,6 +156,7 @@ public record RemisionRequest(DateTime FechaRemision, string Ip);
 [JsonSerializable(typeof(Result<IEnumerable<Remision>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Cliente>>))]
 [JsonSerializable(typeof(Result<Vendedor>))]
+[JsonSerializable(typeof(Result<IEnumerable<VendedoresNumProforma>>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
     

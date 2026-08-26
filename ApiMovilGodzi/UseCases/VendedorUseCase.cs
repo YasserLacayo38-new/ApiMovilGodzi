@@ -34,7 +34,7 @@ public class VendedorUseCase
             var vendedorIp = await _vendedoresIPRepository.GetByIpAsync(ip);
             if (vendedorIp == null)
             {
-                return Result<Vendedor>.Failure("No existe un vendedor asociado a la IP.");
+                return Result<Vendedor>.Failure("No existe un vendedor asociado al dispositivo.");
             }
 
             var vendedor = await _repository.GetByIdAsync(vendedorIp.CodigoVendedor);
