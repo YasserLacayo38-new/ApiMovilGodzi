@@ -2,7 +2,7 @@ namespace ApiMovilGodzi.Models;
 
 public class ProformaDetalle
 {
-    public int IdVentaDetalle { get; set; }
+    public int idProformaDetalle { get; set; }
     public Guid? IdProforma { get; set; }
     public string CodigoModelo { get; set; } = null!;
     public int Cantidad { get; set; }

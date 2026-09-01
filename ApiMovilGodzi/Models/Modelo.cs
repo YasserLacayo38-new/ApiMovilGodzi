@@ -6,4 +6,5 @@ public class Modelo
     public string CodigoVta { get; set; } = null!;
     public string Descripcion { get; set; } = null!;
     public decimal? PrecioVenta { get; set; }
+    public string TipoBateria { get; set; } = null!;
 }
