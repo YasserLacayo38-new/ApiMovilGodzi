@@ -26,6 +26,17 @@ namespace ApiMovilGodzi.Repository
             return result;
         }
 
+        public async Task<ResultProcedure> SincronizarLineasAsync()
+        {
+            using (var connection = new SqlConnection(_connectionString.Connection))
+            {
+                return await connection.QueryFirstAsync<ResultProcedure>(
+                    "spGetLineasFromGodziDatabase",
+                    new { },
+                    commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public async Task<ResultProcedure> SincronizarClientesAsync(string ip)
         {
             using (var connection = new SqlConnection(_connectionString.Connection))

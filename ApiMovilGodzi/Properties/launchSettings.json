@@ -6,7 +6,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "operations/listaprecio",
-      "applicationUrl": "http://192.168.0.10:5049",
+      "applicationUrl": "https://192.168.0.11:5049",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

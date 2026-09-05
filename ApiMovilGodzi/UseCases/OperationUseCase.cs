@@ -1,6 +1,5 @@
 ﻿using ApiMovilGodzi.Models;
 using ApiMovilGodzi.Repository;
-using PruebaSuper_Aplication;
 
 namespace ApiMovilGodzi.UseCases
 {
@@ -18,6 +17,23 @@ namespace ApiMovilGodzi.UseCases
             {
                 var result = await operationRepository.SincronizarListaPrecioAsync();
                 if(result.EstadoProcedure == -1)
+                {
+                    return Result<ResultProcedure>.Failure(result.Mensaje);
+                }
+                return Result<ResultProcedure>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                return Result<ResultProcedure>.Failure(ex.Message);
+            }
+        }
+
+        public async Task<Result<ResultProcedure>> SyncLineasAsync()
+        {
+            try
+            {
+                var result = await operationRepository.SincronizarLineasAsync();
+                if (result.EstadoProcedure == -1)
                 {
                     return Result<ResultProcedure>.Failure(result.Mensaje);
                 }

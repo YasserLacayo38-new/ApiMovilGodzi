@@ -1,9 +1,9 @@
 using ApiMovilGodzi.Conexion;
 using ApiMovilGodzi.Models;
+using ApiMovilGodzi.Models.ModelsDto;
 using ApiMovilGodzi.Repository;
 using ApiMovilGodzi.UseCases;
 using Microsoft.AspNetCore.Mvc;
-using PruebaSuper_Aplication;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -39,6 +39,8 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<ClienteRepository>()
     .AddScoped<VendedoresNumProformaRepository>()
     .AddScoped<GarantiaRepository>()
+    .AddScoped<ProformaRepository>()
+    .AddScoped<LineaRepository>()
     .AddScoped<OperationUseCase>()
     .AddScoped<ListaPrecioUseCase>()
     .AddScoped<ModeloUseCase>()
@@ -46,9 +48,11 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<RemisionUseCase>()
     .AddScoped<ClienteUseCase>()
     .AddScoped<VendedoresNumProformaUseCase>()
-    .AddScoped<GarantiaUseCase>();
+    .AddScoped<GarantiaUseCase>()
+    .AddScoped<ProformaUseCase>()
+    .AddScoped<LineaUseCase>();
 
-//builder.WebHost.UseKestrelHttpsConfiguration();
+builder.WebHost.UseKestrelHttpsConfiguration();
 
 var app = builder.Build();
 
@@ -58,6 +62,11 @@ var operationApi = app.MapGroup("/operations");
 operationApi.MapPost("/listaprecio", async (OperationUseCase useCase) =>
 {
     var result = await useCase.SyncListaPrecioAync();
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+operationApi.MapPost("/lineas", async (OperationUseCase useCase) =>
+{
+    var result = await useCase.SyncLineasAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 operationApi.MapPost("/clientes", async ([FromBody]ClientesRequest request, OperationUseCase useCase) =>
@@ -156,6 +165,20 @@ garantiasApi.MapGet("/byvendedor", async ([FromQuery] DateTime fechaRemision, [F
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
+var proformasApi = app.MapGroup("/proformas");
+proformasApi.MapPost("/", async ([FromBody] ProformaDetalleGarantiaDTO request, ProformaUseCase useCase) =>
+{
+    var result = await useCase.AddProformasAsync(request);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
+var lineasApi = app.MapGroup("/lineas");
+lineasApi.MapGet("/", async (LineaUseCase useCase) =>
+{
+    var result = await useCase.GetAllLineasAsync();
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
 app.Run();
 
 public record ClientesRequest(string Ip);
@@ -171,6 +194,9 @@ public record RemisionRequest(DateTime FechaRemision, string Ip);
 [JsonSerializable(typeof(Result<Vendedor>))]
 [JsonSerializable(typeof(Result<IEnumerable<VendedoresNumProforma>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Garantia>>))]
+[JsonSerializable(typeof(ProformaDetalleGarantiaDTO))]
+[JsonSerializable(typeof(Result<bool>))]
+[JsonSerializable(typeof(Result<IEnumerable<Linea>>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
     

@@ -1,6 +1,5 @@
 using ApiMovilGodzi.Models;
 using ApiMovilGodzi.Repository;
-using PruebaSuper_Aplication;
 
 namespace ApiMovilGodzi.UseCases;
 

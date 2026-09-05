@@ -23,7 +23,7 @@ public class ModeloRepository
         string codigoVendedor, DateTime fechaRemision)
     {
         const string sql = @"
-            SELECT DISTINCT m.codigoModelo, m.codigo_vta AS CodigoVta, m.descripcion, m.precioVenta, m.tipoBateria
+            SELECT DISTINCT m.codigoModelo, m.codigo_vta AS CodigoVta, m.codigoLinea, m.descripcion, m.precioVenta, m.tipoBateria
             FROM Modelo m
             INNER JOIN RemisionDetalle rd ON m.codigoModelo = rd.codigoModelo
             INNER JOIN Remision r ON r.numcom = rd.numcom

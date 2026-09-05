@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PruebaSuper_Aplication
+namespace ApiMovilGodzi.UseCases
 {
     public class Result<T>
     {
