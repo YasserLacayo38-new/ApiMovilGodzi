@@ -45,4 +45,23 @@ public class ModeloUseCase
             return Result<IEnumerable<Modelo>>.Failure(ex.Message);
         }
     }
+
+    public async Task<Result<IEnumerable<Modelo>>> GetModelosByIp(string ip)
+    {
+        try
+        {
+            var vendedor = await _vendedoresIPRepository.GetByIpAsync(ip);
+            if (vendedor == null)
+            {
+                return Result<IEnumerable<Modelo>>.Failure("No existe un vendedor asociado a la IP.");
+            }
+
+            var result = await _repository.GetModelosByVendedorInventario(vendedor.CodigoVendedor);
+            return Result<IEnumerable<Modelo>>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            return Result<IEnumerable<Modelo>>.Failure(ex.Message);
+        }
+    }
 }

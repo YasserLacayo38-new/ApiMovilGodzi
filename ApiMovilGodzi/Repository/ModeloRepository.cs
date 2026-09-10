@@ -34,4 +34,19 @@ public class ModeloRepository
         return await connection.QueryAsync<Modelo>(sql,
             new { CodigoVendedor = codigoVendedor, FechaRemision = fechaRemision });
     }
+
+    public async Task<IEnumerable<Modelo>> GetModelosByVendedorInventario(
+       string codigoVendedor)
+    {
+        const string sql = @"
+            SELECT  m.codigoModelo, m.codigo_vta AS CodigoVta, m.codigoLinea, m.descripcion, m.precioVenta, m.tipoBateria
+            FROM Modelo m
+            INNER JOIN Inventario inv ON inv.codigoModelo = m.codigoModelo
+            WHERE inv.codigoVendedor = @CodigoVendedor AND inv.cantidadActual > 0
+            ";
+
+        using var connection = new SqlConnection(_connectionString.Connection);
+        return await connection.QueryAsync<Modelo>(sql,
+            new { CodigoVendedor = codigoVendedor });
+    }
 }

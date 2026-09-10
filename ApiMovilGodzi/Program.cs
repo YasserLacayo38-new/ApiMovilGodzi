@@ -41,6 +41,7 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<GarantiaRepository>()
     .AddScoped<ProformaRepository>()
     .AddScoped<LineaRepository>()
+    .AddScoped<InventarioRepository>()
     .AddScoped<OperationUseCase>()
     .AddScoped<ListaPrecioUseCase>()
     .AddScoped<ModeloUseCase>()
@@ -50,9 +51,10 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<VendedoresNumProformaUseCase>()
     .AddScoped<GarantiaUseCase>()
     .AddScoped<ProformaUseCase>()
-    .AddScoped<LineaUseCase>();
+    .AddScoped<LineaUseCase>()
+    .AddScoped<InventarioUseCase>();
 
-builder.WebHost.UseKestrelHttpsConfiguration();
+//builder.WebHost.UseKestrelHttpsConfiguration();
 
 var app = builder.Build();
 
@@ -103,9 +105,9 @@ modelosApi.MapGet("/", async (ModeloUseCase useCase) =>
     var result = await useCase.GetAllModeloAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
-modelosApi.MapGet("/byvendedor", async ([FromQuery] DateTime fechaRemision, [FromQuery] string ip, ModeloUseCase useCase) =>
+modelosApi.MapGet("/byvendedor", async ( [FromQuery] string ip, ModeloUseCase useCase) =>
 {
-    var result = await useCase.GetModelosByIpAndFechaRemisionAsync(ip, fechaRemision);
+    var result = await useCase.GetModelosByIp(ip);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
@@ -179,6 +181,13 @@ lineasApi.MapGet("/", async (LineaUseCase useCase) =>
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
+var inventarioApi = app.MapGroup("/inventario");
+inventarioApi.MapGet("/byip", async ([FromQuery] string ip, InventarioUseCase useCase) =>
+{
+    var result = await useCase.GetInventarioByIpAsync(ip);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
 app.Run();
 
 public record ClientesRequest(string Ip);
@@ -197,6 +206,7 @@ public record RemisionRequest(DateTime FechaRemision, string Ip);
 [JsonSerializable(typeof(ProformaDetalleGarantiaDTO))]
 [JsonSerializable(typeof(Result<bool>))]
 [JsonSerializable(typeof(Result<IEnumerable<Linea>>))]
+[JsonSerializable(typeof(Result<IEnumerable<Inventario>>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
     
