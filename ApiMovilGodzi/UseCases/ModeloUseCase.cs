@@ -6,12 +6,12 @@ namespace ApiMovilGodzi.UseCases;
 public class ModeloUseCase
 {
     private readonly ModeloRepository _repository;
-    private readonly VendedoresIPRepository _vendedoresIPRepository;
+    private readonly VendedoresDeviceRepository _vendedoresDeviceRepository;
 
-    public ModeloUseCase(ModeloRepository repository, VendedoresIPRepository vendedoresIPRepository)
+    public ModeloUseCase(ModeloRepository repository, VendedoresDeviceRepository vendedoresDeviceRepository)
     {
         _repository = repository;
-        _vendedoresIPRepository = vendedoresIPRepository;
+        _vendedoresDeviceRepository = vendedoresDeviceRepository;
     }
 
     public async Task<Result<IEnumerable<Modelo>>> GetAllModeloAsync()
@@ -27,14 +27,14 @@ public class ModeloUseCase
         }
     }
 
-    public async Task<Result<IEnumerable<Modelo>>> GetModelosByIpAndFechaRemisionAsync(string ip, DateTime fechaRemision)
+    public async Task<Result<IEnumerable<Modelo>>> GetModelosByDeviceAndFechaRemisionAsync(string idDevice, DateTime fechaRemision)
     {
         try
         {
-            var vendedor = await _vendedoresIPRepository.GetByIpAsync(ip);
+            var vendedor = await _vendedoresDeviceRepository.GetByDeviceAsync(idDevice);
             if (vendedor == null)
             {
-                return Result<IEnumerable<Modelo>>.Failure("No existe un vendedor asociado a la IP.");
+                return Result<IEnumerable<Modelo>>.Failure("No existe un vendedor asociado al dispositivo.");
             }
 
             var result = await _repository.GetModelosByVendedorFechaRemision(vendedor.CodigoVendedor, fechaRemision);
@@ -46,14 +46,14 @@ public class ModeloUseCase
         }
     }
 
-    public async Task<Result<IEnumerable<Modelo>>> GetModelosByIp(string ip)
+    public async Task<Result<IEnumerable<Modelo>>> GetModelosByDevice(string idDevice)
     {
         try
         {
-            var vendedor = await _vendedoresIPRepository.GetByIpAsync(ip);
+            var vendedor = await _vendedoresDeviceRepository.GetByDeviceAsync(idDevice);
             if (vendedor == null)
             {
-                return Result<IEnumerable<Modelo>>.Failure("No existe un vendedor asociado a la IP.");
+                return Result<IEnumerable<Modelo>>.Failure("No existe un vendedor asociado al dispositivo.");
             }
 
             var result = await _repository.GetModelosByVendedorInventario(vendedor.CodigoVendedor);

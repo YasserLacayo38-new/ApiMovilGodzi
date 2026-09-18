@@ -6,12 +6,12 @@ namespace ApiMovilGodzi.UseCases;
 public class RemisionUseCase
 {
     private readonly RemisionRepository _remisionRepository;
-    private readonly VendedoresIPRepository _vendedoresIPRepository;
+    private readonly VendedoresDeviceRepository _vendedoresDeviceRepository;
 
-    public RemisionUseCase(RemisionRepository remisionRepository, VendedoresIPRepository vendedoresIPRepository)
+    public RemisionUseCase(RemisionRepository remisionRepository, VendedoresDeviceRepository vendedoresDeviceRepository)
     {
         _remisionRepository = remisionRepository;
-        _vendedoresIPRepository = vendedoresIPRepository;
+        _vendedoresDeviceRepository = vendedoresDeviceRepository;
     }
 
     public async Task<Result<IEnumerable<Remision>>> GetAllRemisionAsync()
@@ -27,14 +27,14 @@ public class RemisionUseCase
         }
     }
 
-    public async Task<Result<IEnumerable<Remision>>> GetAllRemisionByFechaAndIpAsync(DateTime fechaRemision, string ip)
+    public async Task<Result<IEnumerable<Remision>>> GetAllRemisionByFechaAndDeviceAsync(DateTime fechaRemision, string idDevice)
     {
         try
         {
-            var vendedor = await _vendedoresIPRepository.GetByIpAsync(ip);
+            var vendedor = await _vendedoresDeviceRepository.GetByDeviceAsync(idDevice);
             if (vendedor == null)
             {
-                return Result<IEnumerable<Remision>>.Failure("No existe un vendedor asociado a la IP.");
+                return Result<IEnumerable<Remision>>.Failure("No existe un vendedor asociado al dispositivo.");
             }
 
             var result = await _remisionRepository.GetAllAsyncByVendedorFechaRemision(vendedor.CodigoVendedor, fechaRemision);

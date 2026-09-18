@@ -37,13 +37,13 @@ namespace ApiMovilGodzi.Repository
             }
         }
 
-        public async Task<ResultProcedure> SincronizarClientesAsync(string ip)
+        public async Task<ResultProcedure> SincronizarClientesAsync(string IdDevice)
         {
             using (var connection = new SqlConnection(_connectionString.Connection))
             {
                 return await connection.QueryFirstAsync<ResultProcedure>(
                     "spGetClientesFromGodziDatabase",
-                    new { Ip = ip },
+                    new { IdDevice = IdDevice },
                     commandType: CommandType.StoredProcedure);
             }
         }
@@ -70,7 +70,7 @@ namespace ApiMovilGodzi.Repository
             }
         }
 
-        public async Task<ResultProcedure> SincronizarRemisionesAsync(DateTime date, string ip)
+        public async Task<ResultProcedure> SincronizarRemisionesAsync(DateTime date, string IdDevice)
         {
             using (var connection = new SqlConnection(_connectionString.Connection))
             {
@@ -78,7 +78,7 @@ namespace ApiMovilGodzi.Repository
                     "spGetRemisionesFromGodziDatabase",
                     new {
                         FechaRemision = date,
-                        Ip  = ip
+                        IdDevice = IdDevice
                     },
                     commandType: CommandType.StoredProcedure);
             }

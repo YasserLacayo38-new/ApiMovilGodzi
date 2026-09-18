@@ -9,7 +9,7 @@ POST {{ApiMovilGodzi_HostAddress}}/operations/clientes
 Content-Type: application/json
 
 {
-  "ip": "192.168.1.1"
+  "idDevice": "192.168.1.1"
 }
 
 ###
@@ -29,7 +29,7 @@ Content-Type: application/json
 
 {
   "fechaRemision": "2026-07-23",
-  "ip": "192.168.1.1"
+  "idDevice": "192.168.1.1"
 }
 
 ###
@@ -44,7 +44,7 @@ Accept: application/json
 
 ###
 
-GET {{ApiMovilGodzi_HostAddress}}/modelos/byvendedor?fechaRemision=2026-07-23&ip=192.168.1.1
+GET {{ApiMovilGodzi_HostAddress}}/modelos/bydevice?idDevice=192.168.1.1
 Accept: application/json
 
 ###
@@ -54,12 +54,12 @@ Accept: application/json
 
 ###
 
-GET {{ApiMovilGodzi_HostAddress}}/remisiones/byvendedor?fechaRemision=2026-07-23&ip=192.168.1.1
+GET {{ApiMovilGodzi_HostAddress}}/remisiones/bydevice?fechaRemision=2026-07-23&idDevice=192.168.1.1
 Accept: application/json
 
 ###
 
-GET {{ApiMovilGodzi_HostAddress}}/vendedores/byip?ip=192.168.1.1
+GET {{ApiMovilGodzi_HostAddress}}/vendedores/bydevice?idDevice=192.168.1.1
 Accept: application/json
 
 ###

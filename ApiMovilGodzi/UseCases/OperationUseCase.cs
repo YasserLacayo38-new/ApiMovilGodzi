@@ -45,11 +45,11 @@ namespace ApiMovilGodzi.UseCases
             }
         }
 
-        public async Task<Result<ResultProcedure>> SyncClientesAsync(string ip)
+        public async Task<Result<ResultProcedure>> SyncClientesAsync(string IdDevice)
         {
             try
             {
-                var result = await operationRepository.SincronizarClientesAsync(ip);
+                var result = await operationRepository.SincronizarClientesAsync(IdDevice);
                 if (result.EstadoProcedure == -1)
                 {
                     return Result<ResultProcedure>.Failure(result.Mensaje);
@@ -96,11 +96,11 @@ namespace ApiMovilGodzi.UseCases
             }
         }
 
-        public async Task<Result<ResultProcedure>> SyncRemisionesAsync(DateTime FechaRemision, string ip)
+        public async Task<Result<ResultProcedure>> SyncRemisionesAsync(DateTime FechaRemision, string IdDevice)
         {
             try
             {
-                var result = await operationRepository.SincronizarRemisionesAsync(FechaRemision, ip);
+                var result = await operationRepository.SincronizarRemisionesAsync(FechaRemision, IdDevice);
                 if (result.EstadoProcedure == -1)
                 {
                     return Result<ResultProcedure>.Failure(result.Mensaje);

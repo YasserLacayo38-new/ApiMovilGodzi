@@ -6,25 +6,25 @@ namespace ApiMovilGodzi.UseCases;
 public class InventarioUseCase
 {
     private readonly InventarioRepository _repository;
-    private readonly VendedoresIPRepository _vendedoresIPRepository;
+    private readonly VendedoresDeviceRepository _vendedoresDeviceRepository;
 
-    public InventarioUseCase(InventarioRepository repository, VendedoresIPRepository vendedoresIPRepository)
+    public InventarioUseCase(InventarioRepository repository, VendedoresDeviceRepository vendedoresDeviceRepository)
     {
         _repository = repository;
-        _vendedoresIPRepository = vendedoresIPRepository;
+        _vendedoresDeviceRepository = vendedoresDeviceRepository;
     }
 
-    public async Task<Result<IEnumerable<Inventario>>> GetInventarioByIpAsync(string ip)
+    public async Task<Result<IEnumerable<Inventario>>> GetInventarioByDeviceAsync(string idDevice)
     {
         try
         {
-            var vendedorIp = await _vendedoresIPRepository.GetByIpAsync(ip);
-            if (vendedorIp == null)
+            var vendedorDevice = await _vendedoresDeviceRepository.GetByDeviceAsync(idDevice);
+            if (vendedorDevice == null)
             {
                 return Result<IEnumerable<Inventario>>.Failure("No existe un vendedor asociado al dispositivo.");
             }
 
-            var result = await _repository.GetAllByVendedorAsync(vendedorIp.CodigoVendedor);
+            var result = await _repository.GetAllByVendedorAsync(vendedorDevice.CodigoVendedor);
             return Result<IEnumerable<Inventario>>.Success(result);
         }
         catch (Exception ex)

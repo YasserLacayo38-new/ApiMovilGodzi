@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-var builder = WebApplication.CreateSlimBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseWindowsService();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -35,13 +37,14 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<ModeloRepository>()
     .AddScoped<VendedorRepository>()
     .AddScoped<RemisionRepository>()
-    .AddScoped<VendedoresIPRepository>()
+    .AddScoped<VendedoresDeviceRepository>()
     .AddScoped<ClienteRepository>()
     .AddScoped<VendedoresNumProformaRepository>()
     .AddScoped<GarantiaRepository>()
     .AddScoped<ProformaRepository>()
     .AddScoped<LineaRepository>()
     .AddScoped<InventarioRepository>()
+    .AddScoped<AdminDeviceRepository>()
     .AddScoped<OperationUseCase>()
     .AddScoped<ListaPrecioUseCase>()
     .AddScoped<ModeloUseCase>()
@@ -52,9 +55,10 @@ builder.Services.AddScoped<ConnectionString>(sp =>
     .AddScoped<GarantiaUseCase>()
     .AddScoped<ProformaUseCase>()
     .AddScoped<LineaUseCase>()
-    .AddScoped<InventarioUseCase>();
+    .AddScoped<InventarioUseCase>()
+    .AddScoped<AdminDeviceUseCase>();
 
-//builder.WebHost.UseKestrelHttpsConfiguration();
+builder.WebHost.UseKestrelHttpsConfiguration();
 
 var app = builder.Build();
 
@@ -73,7 +77,7 @@ operationApi.MapPost("/lineas", async (OperationUseCase useCase) =>
 });
 operationApi.MapPost("/clientes", async ([FromBody]ClientesRequest request, OperationUseCase useCase) =>
 {
-    var result = await useCase.SyncClientesAsync(request.Ip);
+    var result = await useCase.SyncClientesAsync(request.IdDevice);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 operationApi.MapPost("/vendedores", async (OperationUseCase useCase) =>
@@ -88,7 +92,7 @@ operationApi.MapPost("/modelos", async (OperationUseCase useCase) =>
 });
 operationApi.MapPost("/remisiones", async ([FromBody] RemisionRequest request, OperationUseCase useCase) =>
 {
-    var result = await useCase.SyncRemisionesAsync(request.FechaRemision, request.Ip);
+    var result = await useCase.SyncRemisionesAsync(request.FechaRemision, request.IdDevice);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
@@ -105,9 +109,9 @@ modelosApi.MapGet("/", async (ModeloUseCase useCase) =>
     var result = await useCase.GetAllModeloAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
-modelosApi.MapGet("/byvendedor", async ( [FromQuery] string ip, ModeloUseCase useCase) =>
+modelosApi.MapGet("/bydevice", async ( [FromQuery] string idDevice, ModeloUseCase useCase) =>
 {
-    var result = await useCase.GetModelosByIp(ip);
+    var result = await useCase.GetModelosByDevice(idDevice);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
@@ -117,9 +121,9 @@ remisionesApi.MapGet("/", async (RemisionUseCase useCase) =>
     var result = await useCase.GetAllRemisionAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
-remisionesApi.MapGet("/byvendedor", async ([FromQuery] DateTime fechaRemision, [FromQuery] string ip, RemisionUseCase useCase) =>
+remisionesApi.MapGet("/bydevice", async ([FromQuery] DateTime fechaRemision, [FromQuery] string idDevice, RemisionUseCase useCase) =>
 {
-    var result = await useCase.GetAllRemisionByFechaAndIpAsync(fechaRemision, ip);
+    var result = await useCase.GetAllRemisionByFechaAndDeviceAsync(fechaRemision, idDevice);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
@@ -130,16 +134,21 @@ clientesApi.MapGet("/", async (ClienteUseCase useCase) =>
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
-clientesApi.MapGet("/byip", async ([FromQuery] string ip, ClienteUseCase useCase) =>
+clientesApi.MapGet("/bydevice", async ([FromQuery] string idDevice, ClienteUseCase useCase) =>
 {
-    var result = await useCase.GetClientesByIpAsync(ip);
+    var result = await useCase.GetClientesByDeviceAsync(idDevice);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
 var vendedoresApi = app.MapGroup("/vendedores");
-vendedoresApi.MapGet("/byip", async ([FromQuery] string ip, VendedorUseCase useCase) =>
+vendedoresApi.MapGet("/", async(VendedorUseCase useCase) =>
 {
-    var result = await useCase.GetVendedorByIpAsync(ip);
+    var result = await useCase.GetAllVendedorAsync();
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+vendedoresApi.MapGet("/bydevice", async ([FromQuery] string idDevice, VendedorUseCase useCase) =>
+{
+    var result = await useCase.GetVendedorByDeviceAsync(idDevice);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
@@ -149,9 +158,14 @@ numProformasApi.MapGet("/", async (VendedoresNumProformaUseCase useCase) =>
     var result = await useCase.GetAllNumProformasAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
-numProformasApi.MapGet("/byip", async ([FromQuery] string ip, VendedoresNumProformaUseCase useCase) =>
+numProformasApi.MapGet("/bydevice", async ([FromQuery] string idDevice, VendedoresNumProformaUseCase useCase) =>
 {
-    var result = await useCase.GetNumProformasByIpAsync(ip);
+    var result = await useCase.GetNumProformasByDeviceAsync(idDevice);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+numProformasApi.MapPost("/", async ([FromBody] NumProformaRequest request, VendedoresNumProformaUseCase useCase) =>
+{
+    var result = await useCase.AddNumProformaAsync(request.NumeroProforma, request.CodigoVendedor);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
@@ -161,9 +175,9 @@ garantiasApi.MapGet("/", async (GarantiaUseCase useCase) =>
     var result = await useCase.GetAllGarantiasAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
-garantiasApi.MapGet("/byvendedor", async ([FromQuery] DateTime fechaRemision, [FromQuery] string ip, GarantiaUseCase useCase) =>
+garantiasApi.MapGet("/bydevice", async ([FromQuery] string idDevice, GarantiaUseCase useCase) =>
 {
-    var result = await useCase.GetGarantiasByIpAndFechaAsync(ip, fechaRemision);
+    var result = await useCase.GetGarantiasDisponiblesByDeviceAsync(idDevice);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
@@ -182,20 +196,29 @@ lineasApi.MapGet("/", async (LineaUseCase useCase) =>
 });
 
 var inventarioApi = app.MapGroup("/inventario");
-inventarioApi.MapGet("/byip", async ([FromQuery] string ip, InventarioUseCase useCase) =>
+inventarioApi.MapGet("/bydevice", async ([FromQuery] string idDevice, InventarioUseCase useCase) =>
 {
-    var result = await useCase.GetInventarioByIpAsync(ip);
+    var result = await useCase.GetInventarioByDeviceAsync(idDevice);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
+
+var adminDevicesApi = app.MapGroup("/admindevices");
+adminDevicesApi.MapGet("/", async (AdminDeviceUseCase useCase) =>
+{
+    var result = await useCase.GetAllAdminDevicesAsync();
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
 app.Run();
 
-public record ClientesRequest(string Ip);
-public record RemisionRequest(DateTime FechaRemision, string Ip);
+public record ClientesRequest(string IdDevice);
+public record RemisionRequest(DateTime FechaRemision, string IdDevice);
+public record NumProformaRequest(int NumeroProforma, string CodigoVendedor);
 
 [JsonSerializable(typeof(ClientesRequest))]
 [JsonSerializable(typeof(Result<ResultProcedure>))]
 [JsonSerializable(typeof(RemisionRequest))]
+[JsonSerializable(typeof(NumProformaRequest))]
 [JsonSerializable(typeof(Result<IEnumerable<ListaPrecio>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Modelo>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Remision>>))]
@@ -207,6 +230,7 @@ public record RemisionRequest(DateTime FechaRemision, string Ip);
 [JsonSerializable(typeof(Result<bool>))]
 [JsonSerializable(typeof(Result<IEnumerable<Linea>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Inventario>>))]
+[JsonSerializable(typeof(Result<IEnumerable<AdminDevice>>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
     

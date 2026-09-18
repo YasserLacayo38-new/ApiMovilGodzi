@@ -6,11 +6,11 @@ namespace ApiMovilGodzi.UseCases;
 public class VendedorUseCase
 {
     private readonly VendedorRepository _repository;
-    private readonly VendedoresIPRepository _vendedoresIPRepository;
-    public VendedorUseCase(VendedorRepository repository, VendedoresIPRepository vendedoresIPRepository)
+    private readonly VendedoresDeviceRepository _vendedoresDeviceRepository;
+    public VendedorUseCase(VendedorRepository repository, VendedoresDeviceRepository vendedoresDeviceRepository)
     {
         _repository = repository;
-        _vendedoresIPRepository = vendedoresIPRepository;
+        _vendedoresDeviceRepository = vendedoresDeviceRepository;
     }
 
     public async Task<Result<IEnumerable<Vendedor>>> GetAllVendedorAsync()
@@ -26,17 +26,17 @@ public class VendedorUseCase
         }
     }
 
-    public async Task<Result<Vendedor>> GetVendedorByIpAsync(string ip)
+    public async Task<Result<Vendedor>> GetVendedorByDeviceAsync(string idDevice)
     {
         try
         {
-            var vendedorIp = await _vendedoresIPRepository.GetByIpAsync(ip);
-            if (vendedorIp == null)
+            var vendedorDevice = await _vendedoresDeviceRepository.GetByDeviceAsync(idDevice);
+            if (vendedorDevice == null)
             {
                 return Result<Vendedor>.Failure("No existe un vendedor asociado al dispositivo.");
             }
 
-            var vendedor = await _repository.GetByIdAsync(vendedorIp.CodigoVendedor);
+            var vendedor = await _repository.GetByIdAsync(vendedorDevice.CodigoVendedor);
             if (vendedor == null)
             {
                 return Result<Vendedor>.Failure("No se encontró el vendedor.");
