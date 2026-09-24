@@ -83,5 +83,21 @@ namespace ApiMovilGodzi.Repository
                     commandType: CommandType.StoredProcedure);
             }
         }
+
+        public async Task<ResultProcedure> SincronizarInventarioAsync(DateTime date, string IdDevice)
+        {
+            using (var connection = new SqlConnection(_connectionString.Connection))
+            {
+                return await connection.QueryFirstAsync<ResultProcedure>(
+                    "spGetInventarioFromGodzi",
+                    new
+                    {
+                        Anio = date.Year.ToString("D4"),
+                        Mes = date.Month.ToString("D2"),
+                        IdDevice = IdDevice
+                    },
+                    commandType: CommandType.StoredProcedure);
+            }
+        }
     }
 }

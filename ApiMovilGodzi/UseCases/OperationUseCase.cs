@@ -112,5 +112,22 @@ namespace ApiMovilGodzi.UseCases
                 return Result<ResultProcedure>.Failure(ex.Message);
             }
         }
+
+        public async Task<Result<ResultProcedure>> SyncInventarioAsync(DateTime FechaInventario, string IdDevice)
+        {
+            try
+            {
+                var result = await operationRepository.SincronizarInventarioAsync(FechaInventario, IdDevice);
+                if (result.EstadoProcedure == -1)
+                {
+                    return Result<ResultProcedure>.Failure(result.Mensaje);
+                }
+                return Result<ResultProcedure>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                return Result<ResultProcedure>.Failure(ex.Message);
+            }
+        }
     }
 }

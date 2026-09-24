@@ -95,6 +95,11 @@ operationApi.MapPost("/remisiones", async ([FromBody] RemisionRequest request, O
     var result = await useCase.SyncRemisionesAsync(request.FechaRemision, request.IdDevice);
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
+operationApi.MapPost("/inventario", async ([FromBody] InventarioRequest request, OperationUseCase useCase) =>
+{
+    var result = await useCase.SyncInventarioAsync(request.FechaInventario, request.IdDevice);
+    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+});
 
 var listaprecioApi = app.MapGroup("/listaprecio");
 listaprecioApi.MapGet("/", async (ListaPrecioUseCase useCase) =>
@@ -213,11 +218,13 @@ app.Run();
 
 public record ClientesRequest(string IdDevice);
 public record RemisionRequest(DateTime FechaRemision, string IdDevice);
+public record InventarioRequest(DateTime FechaInventario, string IdDevice);
 public record NumProformaRequest(int NumeroProforma, string CodigoVendedor);
 
 [JsonSerializable(typeof(ClientesRequest))]
 [JsonSerializable(typeof(Result<ResultProcedure>))]
 [JsonSerializable(typeof(RemisionRequest))]
+[JsonSerializable(typeof(InventarioRequest))]
 [JsonSerializable(typeof(NumProformaRequest))]
 [JsonSerializable(typeof(Result<IEnumerable<ListaPrecio>>))]
 [JsonSerializable(typeof(Result<IEnumerable<Modelo>>))]

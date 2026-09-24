@@ -17,7 +17,7 @@ public class InventarioRepository
     {
         using var connection = new SqlConnection(_connectionString.Connection);
         return await connection.QueryAsync<Inventario>(
-            "SELECT * FROM Inventario WHERE codigoVendedor = @CodigoVendedor",
+            "SELECT * FROM Inventario WHERE codigoVendedor = @CodigoVendedor and cantidadActual > 0",
             new { CodigoVendedor = codigoVendedor });
     }
 }
