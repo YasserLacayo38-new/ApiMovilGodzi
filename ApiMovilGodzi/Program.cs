@@ -174,18 +174,6 @@ numProformasApi.MapPost("/", async ([FromBody] NumProformaRequest request, Vende
     return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
 });
 
-var garantiasApi = app.MapGroup("/garantias");
-garantiasApi.MapGet("/", async (GarantiaUseCase useCase) =>
-{
-    var result = await useCase.GetAllGarantiasAsync();
-    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
-});
-garantiasApi.MapGet("/bydevice", async ([FromQuery] string idDevice, GarantiaUseCase useCase) =>
-{
-    var result = await useCase.GetGarantiasDisponiblesByDeviceAsync(idDevice);
-    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
-});
-
 var proformasApi = app.MapGroup("/proformas");
 proformasApi.MapPost("/", async ([FromBody] ProformaDetalleGarantiaDTO request, ProformaUseCase useCase) =>
 {

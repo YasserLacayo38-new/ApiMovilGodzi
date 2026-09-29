@@ -46,9 +46,9 @@ public class ProformaRepository
 
             const string insertProformaDetalle = @"
                 INSERT INTO ProformaDetalle (idProformaDetalle, idProforma, codigoModelo,
-                                             cantidad, precioVenta, fecha, valida)
+                                             cantidad, precioVenta, garantias,fecha, valida)
                 VALUES (@IdProformaDetalle, @IdProforma, @CodigoModelo,
-                        @Cantidad, @PrecioVenta, @Fecha, @Valida)";
+                        @Cantidad, @PrecioVenta, @Garantias,@Fecha, @Valida)";
 
             foreach (var detalle in dto.ProformasDetalles)
             {
@@ -61,20 +61,6 @@ public class ProformaRepository
                 await connection.ExecuteAsync(insertProformaDetalle, detalle, transaction);
             }
 
-            const string insertProformaDetalleGarantia = @"
-                INSERT INTO ProformaDetalleGarantia (idProformaDetalle, idGarantia)
-                VALUES (@IdProformaDetalle, @IdGarantia)";
-
-            foreach (var garante in dto.ProformasDetallesGarantias)
-            {
-                const string existsProformaDetalleGarantia = @"SELECT COUNT(1) FROM ProformaDetalleGarantia WHERE idProformaDetalle = @IdProformaDetalle AND idGarantia = @IdGarantia";
-                var yaExiste = await connection.ExecuteScalarAsync<int>(existsProformaDetalleGarantia, garante, transaction);
-                if (yaExiste > 0)
-                {
-                    continue;
-                }
-                await connection.ExecuteAsync(insertProformaDetalleGarantia, garante, transaction);
-            }
 
             var MaxNumProforma = dto.Proformas.Max(p => p.NumeroProforma) + 1;
             var codigoVendedor = dto.Proformas[0].CodigoVendedor;

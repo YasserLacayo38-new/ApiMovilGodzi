@@ -7,6 +7,7 @@ public class ProformaDetalle
     public string CodigoModelo { get; set; } = null!;
     public int Cantidad { get; set; }
     public decimal PrecioVenta { get; set; }
+    public string Garantias { get; set; } = null!;
     public DateTime Fecha { get; set; }
     public bool Valida { get; set; }
 }
